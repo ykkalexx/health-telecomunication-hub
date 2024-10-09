@@ -2,6 +2,7 @@
    Features: User registration, login, account management, and profile customization.
    Components:
    Authentication: Use secure methods (e.g., OAuth, JWT) to manage user sessions and protect sensitive health information.
+   Redux will be used here
    User Data Storage: Use MongoDB to store user credentials, profile data, and health metrics.
    Password Recovery: Implement password reset functionality via email.
 
