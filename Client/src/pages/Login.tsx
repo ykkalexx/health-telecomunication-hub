@@ -7,6 +7,7 @@ import { AppDispatch } from "../redux/root";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ const Login: React.FC = () => {
     try {
       await dispatch(login({ email, password })).unwrap();
       navigate("/dashboard");
+      toast.success("Logged in Successfully!");
     } catch (err) {
       console.error("Failed to login:", err);
     }

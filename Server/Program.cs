@@ -13,6 +13,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// allow cors
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll", builder => {
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 // Configure MongoDB
 var mongoClinet = new MongoClient(builder.Configuration.GetConnectionString("MongoDB"));
 var database = mongoClinet.GetDatabase("HealthTracker");
@@ -44,6 +51,7 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
