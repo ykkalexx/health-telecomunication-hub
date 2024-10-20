@@ -12,5 +12,7 @@ namespace Server.core.entities
         public string Username { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
+
+        public List<HealthInfo> HealthInfo { get; set; } = new List<HealthInfo>();
     }
 }

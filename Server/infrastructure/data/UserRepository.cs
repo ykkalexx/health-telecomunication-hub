@@ -27,5 +27,17 @@ namespace Server.infrastructure.data {
         public async Task UpdateAsync(User user) {
             await _users.ReplaceOneAsync(u => u.Id == user.Id, user);
         }
+
+        public async Task AddHealthInfoAsync(string userId, List<HealthInfo> healthInfo) {
+            var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+            var update = Builders<User>.Update.PushEach(u => u.HealthInfo, healthInfo);
+
+            await _users.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<List<HealthInfo>> GetHealthInfoAsync(string userId) {
+            var user = await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
+            return user?.HealthInfo ?? new List<HealthInfo>();
+        }
     }
 }
