@@ -8,3 +8,5 @@ export const selectAuthError = (state: RootState) => state.auth.error;
 export const selectUserId = (state: RootState) => state.auth.user?.id;
 export const selectUserHealthInfo = (state: RootState) =>
   state.auth.user?.healthInfo;
+export const selectUserUsername = (state: RootState) =>
+  state.auth.user?.username;

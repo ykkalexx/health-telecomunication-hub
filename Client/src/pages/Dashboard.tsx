@@ -5,6 +5,7 @@ import UploadModal from "../components/UploadModal";
 import Button from "../components/Button";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { selectUserHealthInfo, selectUserId } from "../redux/selectors";
+import Profile from "../components/Profile";
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -51,9 +52,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
+    <div className="w-full h-full">
       {healthInfo?.length > 0 ? (
-        <div>Hello</div>
+        <Profile />
       ) : (
         <div className="px-6 py-2 border-[1px] rounded-xl space-y-4">
           <h2>Upload File To Get Started</h2>

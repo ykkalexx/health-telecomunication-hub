@@ -27,7 +27,7 @@ const Input: React.FC<InputProps> = ({
 }) => {
   return (
     <input
-      className="font-light px-4 py-2 w-full border-[1px] rounded-xl"
+      className="font-light bg-none px-4 py-2 w-full border-[1px] rounded-xl"
       id={id}
       type={type}
       name={name}
