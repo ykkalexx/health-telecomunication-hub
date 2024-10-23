@@ -4,7 +4,7 @@ import { AppDispatch } from "../redux/root";
 import UploadModal from "../components/UploadModal";
 import Button from "../components/Button";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { selectUserId } from "../redux/selectors";
+import { selectUserHealthInfo, selectUserId } from "../redux/selectors";
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 
   const userId = useSelector(selectUserId);
+  const healthInfo = useSelector(selectUserHealthInfo);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -51,20 +52,24 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="px-6 py-2 border-[1px] rounded-xl space-y-4">
-        <h2>Upload File To Get Started</h2>
-        <Button onClick={openModal}>Upload CSV</Button>
-        <UploadModal
-          isOpen={isModalOpen}
-          closeModal={closeModal}
-          onFileUpload={handleFileUpload}
-        />
-        {uploadStatus && (
-          <div className="mt-4">
-            <p>{uploadStatus}</p>
-          </div>
-        )}
-      </div>
+      {healthInfo?.length > 0 ? (
+        <div>Hello</div>
+      ) : (
+        <div className="px-6 py-2 border-[1px] rounded-xl space-y-4">
+          <h2>Upload File To Get Started</h2>
+          <Button onClick={openModal}>Upload CSV</Button>
+          <UploadModal
+            isOpen={isModalOpen}
+            closeModal={closeModal}
+            onFileUpload={handleFileUpload}
+          />
+          {uploadStatus && (
+            <div className="mt-4">
+              <p>{uploadStatus}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

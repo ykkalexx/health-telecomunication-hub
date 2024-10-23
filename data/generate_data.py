@@ -26,7 +26,7 @@ def generate_fake_data(num_records):
 def write_csv(filename, data):
     with open(filename, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Date', 'Weight', 'Heart Rate', 'Blood Pressure'])
+        writer.writerow(['Date', 'Weight', 'HeartRate', 'BloodPressure'])
         writer.writerows(data)
 
 if __name__ == "__main__":
