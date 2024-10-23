@@ -27,8 +27,8 @@ namespace Server.api.Controllers {
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto) {
             try {
-                var token = await _authService.LoginAsync(loginDto);
-                return Ok(new { Token = token });
+                var (user, token) = await _authService.LoginAsync(loginDto);
+                return Ok(new { User = user, Token = token });
             }
             catch (Exception ex) {
                 return BadRequest(new { Message = ex.Message });

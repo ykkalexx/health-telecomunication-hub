@@ -39,20 +39,20 @@ namespace Server.infrastructure.services
             return await _userRepository.CreateAsync(user);
         }
 
-        public async Task<string> LoginAsync(LoginDto loginDto) {
+        public async Task<(User user, string token)> LoginAsync(LoginDto loginDto) {
             var user = await _userRepository.GetByEmailAsync(loginDto.Email);
-            if (user == null)
-            {
+            if (user == null) {
                 throw new Exception("User with this email does not exist");
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
-            {
+            if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash)) {
                 throw new Exception("Invalid password");
             }
 
-            return GenerateJwtToken(user);
+            var token = GenerateJwtToken(user);
+            return (user, token);
         }
+
 
         public async Task<User> GetUserByEmailAsync(string email)
         {

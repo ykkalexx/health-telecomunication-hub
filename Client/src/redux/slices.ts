@@ -1,11 +1,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { login, register } from "./thunks";
 
+export interface HealthInfo {
+  Date: string;
+  Weight: number;
+  HeartRate: number;
+  BloodPressure: string;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  passwordHash: string;
+  healthInfo: HealthInfo[];
+}
+
 interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
+  user: User | null;
 }
 
 const initialAuthState: AuthState = {
@@ -13,6 +29,7 @@ const initialAuthState: AuthState = {
   isAuthenticated: !!localStorage.getItem("token"),
   loading: false,
   error: null,
+  user: null,
 };
 
 export const authSlice = createSlice({
@@ -22,6 +39,7 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.isAuthenticated = false;
+      state.user = null;
       localStorage.removeItem("token");
     },
   },
@@ -31,12 +49,16 @@ export const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<string>) => {
-        state.token = action.payload;
-        state.isAuthenticated = true;
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        login.fulfilled,
+        (state, action: PayloadAction<{ user: User; token: string }>) => {
+          state.token = action.payload.token;
+          state.isAuthenticated = true;
+          state.loading = false;
+          state.error = null;
+          state.user = action.payload.user;
+        }
+      )
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -57,3 +79,4 @@ export const authSlice = createSlice({
 });
 
 export const { logout } = authSlice.actions;
+export default authSlice.reducer;

@@ -17,17 +17,22 @@ const Dashboard = () => {
   const closeModal = () => setIsModalOpen(false);
 
   const handleFileUpload = async (file: File) => {
+    if (!userId) {
+      setUploadStatus("User ID is missing. Please log in again.");
+      return;
+    }
+
     const s3Client = new S3Client({
-      region: process.env.AWS_REGION as string,
+      region: import.meta.env.VITE_AWS_REGION as string,
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY as string,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+        accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY as string,
+        secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY as string,
       },
     });
 
     const params = {
-      Bucket: process.env.AWS_BUCKET as string,
-      Key: `${userId}/${file.name}`,
+      Bucket: import.meta.env.VITE_AWS_BUCKET as string,
+      Key: `${userId}_${file.name}`,
       Body: file,
       Metadata: {
         "user-id": userId,
