@@ -9,5 +9,8 @@ namespace Server.core.interfaces
         Task UpdateAsync(User user);
         Task AddHealthInfoAsync(string userId, List<HealthInfo> healthInfo);
         Task<List<HealthInfo>> GetHealthInfoAsync(string userId);
+        Task AddGoalAsync(string userId, HealthGoal goal);
+        Task<List<HealthGoal>> GetGoalsAsync(string userId);
+        Task UpdateGoalAsync(string userId, HealthGoal goal);
     }
 }

@@ -39,5 +39,25 @@ namespace Server.infrastructure.data {
             var user = await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
             return user?.HealthInfo ?? new List<HealthInfo>();
         }
+
+        public async Task AddGoalAsync(string userId, HealthGoal goal) {
+            var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+            var update = Builders<User>.Update.Push(u => u.Goals, goal);
+            await _users.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<List<HealthGoal>> GetGoalsAsync(string userId) {
+            var user = await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
+            return user?.Goals ?? new List<HealthGoal>();
+        }
+
+        public async Task UpdateGoalAsync(string userId, HealthGoal goal) {
+            var filter = Builders<User>.Filter.And(
+                Builders<User>.Filter.Eq(u => u.Id, userId),
+                Builders<User>.Filter.ElemMatch(u => u.Goals, g => g.Id == goal.Id)
+            );
+            var update = Builders<User>.Update.Set(u => u.Goals[-1], goal);
+            await _users.UpdateOneAsync(filter, update);
+        }
     }
 }
