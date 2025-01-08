@@ -10,3 +10,4 @@ export const selectUserHealthInfo = (state: RootState) =>
   state.auth.user?.healthInfo;
 export const selectUserUsername = (state: RootState) =>
   state.auth.user?.username;
+export const selectGoals = (state: RootState) => state.goals.goals;

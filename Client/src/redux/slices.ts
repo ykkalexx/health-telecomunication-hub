@@ -8,6 +8,34 @@ export interface HealthInfo {
   BloodPressure: string;
 }
 
+interface Goal {
+  id: string;
+  type:
+    | "Weight"
+    | "HeartRate"
+    | "BloodPressureSystolic"
+    | "BloodPressureDiastolic";
+  currentValue: number;
+  targetValue: number;
+  startDate: string;
+  targetDate: string;
+  isCompleted: boolean;
+  aiGeneratedAdvice: string;
+  progressPercentage: number;
+}
+
+interface GoalsState {
+  goals: Goal[];
+  loading: boolean;
+  error: string | null;
+}
+
+const goalsInitialState: GoalsState = {
+  goals: [],
+  loading: false,
+  error: null,
+};
+
 export interface User {
   id: string;
   username: string;
@@ -75,6 +103,25 @@ export const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
+  },
+});
+
+export const goalsSlice = createSlice({
+  name: "goals",
+  initialState: goalsInitialState,
+  reducers: {
+    setGoals: (state, action: PayloadAction<Goal[]>) => {
+      state.goals = action.payload;
+    },
+    addGoal: (state, action: PayloadAction<Goal>) => {
+      state.goals.push(action.payload);
+    },
+    updateGoal: (state, action: PayloadAction<Goal>) => {
+      const index = state.goals.findIndex((g) => g.id === action.payload.id);
+      if (index !== -1) {
+        state.goals[index] = action.payload;
+      }
+    },
   },
 });
 

@@ -7,6 +7,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { selectUserHealthInfo, selectUserId } from "../redux/selectors";
 import Profile from "../components/Profile";
 import HealthGraphs from "../components/HealthGraphs";
+import GoalLists from "../components/GoalLists";
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,6 +59,7 @@ const Dashboard = () => {
         <div className="flex flex-col space-y-6">
           <Profile />
           <HealthGraphs />
+          <GoalLists />
         </div>
       ) : (
         <div className="px-6 py-2 border-[1px] rounded-xl space-y-4">
