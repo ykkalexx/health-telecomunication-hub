@@ -3,8 +3,23 @@ import axios from "axios";
 import { Login, Register } from "../types/types";
 import { HealthInfo, User } from "./slices";
 import { CreateGoalRequest } from "../types/goals";
+import { GoalType } from "../types/goals";
+import { selectAuthToken, selectUserId } from "./selectors";
+import { RootState } from "./root";
 
 const API_URL = "https://localhost:7214/api";
+
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  console.log("Interceptor token:", token); // Debug token
+
+  if (token) {
+    if (!config.headers) config.headers = {};
+    config.headers.Authorization = `Bearer ${token}`;
+    config.headers["Content-Type"] = "application/json";
+  }
+  return config;
+});
 
 interface LoginResponse {
   user: User;
@@ -48,9 +63,10 @@ export const register = createAsyncThunk(
 
 export const fetchGoals = createAsyncThunk(
   "goals/fetchGoals",
-  async (_, { rejectWithValue }) => {
+  async (userId: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/api/Goals`);
+      const response = await axios.get(`${API_URL}/Goals/${userId}`);
+      console.log("Fetched goals:", response.data);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -62,14 +78,31 @@ export const fetchGoals = createAsyncThunk(
 
 export const createGoal = createAsyncThunk(
   "goals/createGoal",
-  async (goalData: CreateGoalRequest, { rejectWithValue }) => {
+  async (goalData: CreateGoalRequest, { getState, rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/api/Goals`, goalData);
+      const state = getState() as RootState;
+      const userId = selectUserId(state); // Use your existing selector
+
+      if (!userId) {
+        return rejectWithValue("User ID not found");
+      }
+
+      const formattedData = {
+        userId: userId, // Add userId to the request
+        type: Number(goalData.type),
+        currentValue: Number(goalData.currentValue),
+        targetValue: Number(goalData.targetValue),
+        targetDate: new Date(goalData.targetDate).toISOString(),
+      };
+
+      const response = await axios.post(`${API_URL}/Goals`, formattedData);
       return response.data;
     } catch (error: any) {
+      console.error("Error creating goal:", error);
       return rejectWithValue(
-        error.response?.data?.message || "Error creating goal"
+        error.response?.data?.message || "Failed to create goal"
       );
     }
   }
 );
+//export const deleteGoal = createAsyncThunk();

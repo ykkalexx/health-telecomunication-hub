@@ -29,6 +29,7 @@ builder.Services.AddSingleton<IMongoDatabase>(database);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IHealthService, HealthServices>();
+builder.Services.AddScoped<IGoalService, GoalService>();
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -40,11 +41,46 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+            )
+        };
+
+        // Add JWT events for debugging
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogInformation("Token validated successfully");
+                return Task.CompletedTask;
+            },
+            OnAuthenticationFailed = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogError($"Authentication failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            }
         };
     });
 
+// Add logging middleware for debuggin
+
 var app = builder.Build();
+
+app.Use(async (context, next) => {
+    var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
+    if (authHeader != null)
+    {
+        var token = authHeader.StartsWith("Bearer ") 
+            ? authHeader.Substring(7) 
+            : authHeader;
+            
+        Console.WriteLine($"Auth header: {authHeader}");
+        Console.WriteLine($"Extracted token: {token.Substring(0, 20)}...");
+    }
+    await next();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {

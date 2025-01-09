@@ -2,6 +2,7 @@
 
 namespace Server.core.dtos {
     public class CreateGoalDto {
+        public string UserId { get; set; }
         public GoalType Type { get; set; }
         public double CurrentValue { get; set; }
         public double TargetValue { get; set; }

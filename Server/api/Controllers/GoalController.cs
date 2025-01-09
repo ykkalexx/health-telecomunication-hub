@@ -5,46 +5,47 @@ using Server.core.interfaces;
 
 namespace Server.api.Controllers {
 
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class GoalsController : ControllerBase { 
-        private readonly IGoalService _goalService;
 
-        public GoalsController(IGoalService goalService) {
+        private readonly IGoalService _goalService;
+        private readonly ILogger<GoalsController> _logger;
+
+        public GoalsController(IGoalService goalService, ILogger<GoalsController> logger) {
             _goalService = goalService;
+            _logger = logger;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateGoal([FromBody] CreateGoalDto goalDto) {
-            try 
-            {
-                var userId = User.FindFirst("sub")?.Value;
-                if (string.IsNullOrEmpty(userId)) {
-                    return Unauthorized();
+            try {
+                // Get userId from the request body
+                if (string.IsNullOrEmpty(goalDto.UserId)) {
+                    return BadRequest("UserId is required");
                 }
 
-                var goal = await _goalService.CreateGoalAsync(userId, goalDto);
+                var goal = await _goalService.CreateGoalAsync(goalDto.UserId, goalDto);
                 return Ok(goal);
-
-            } catch (Exception ex) 
-            {
+            }
+            catch (Exception ex) {
+                _logger.LogError(ex, "Error creating goal");
                 return BadRequest(new { Message = ex.Message });
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetGoals() {
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetGoals(string userId) {
             try {
-                var userId = User.FindFirst("sub")?.Value;
                 if (string.IsNullOrEmpty(userId)) {
-                    return Unauthorized();
+                    return BadRequest("UserId is required");
                 }
 
                 var goals = await _goalService.GetGoalsAsync(userId);
                 return Ok(goals);
             }
             catch (Exception ex) {
+                _logger.LogError(ex, "Error fetching goals for user {UserId}", userId);
                 return BadRequest(new { Message = ex.Message });
             }
         }

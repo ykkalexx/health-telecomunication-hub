@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { useDispatch } from "react-redux";
 import { createGoal } from "../redux/thunks";
+import { AppDispatch } from "../redux/root";
+import { GoalType } from "../types/goals";
 
 interface AddGoalModalProps {
   isOpen: boolean;
@@ -13,18 +15,24 @@ export const AddGoalModal: React.FC<AddGoalModalProps> = ({
   onClose,
 }) => {
   const [formData, setFormData] = useState({
-    type: "Weight",
+    type: GoalType.Weight,
     currentValue: "",
     targetValue: "",
     targetDate: "",
   });
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const goalData = {
+      type: Number(formData.type), // Ensure type is a number
+      currentValue: parseFloat(formData.currentValue),
+      targetValue: parseFloat(formData.targetValue),
+      targetDate: new Date(formData.targetDate).toISOString(),
+    };
     //@ts-ignore
-    await dispatch(createGoal(formData));
+    await dispatch(createGoal(goalData));
     onClose();
   };
 
@@ -46,50 +54,72 @@ export const AddGoalModal: React.FC<AddGoalModalProps> = ({
               <select
                 value={formData.type}
                 onChange={(e) =>
-                  setFormData({ ...formData, type: e.target.value })
+                  setFormData({
+                    ...formData,
+                    type: Number(e.target.value) as GoalType,
+                  })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               >
-                <option value="Weight">Weight</option>
-                <option value="HeartRate">Heart Rate</option>
-                <option value="BloodPressureSystolic">
+                <option value={GoalType.Weight}>Weight</option>
+                <option value={GoalType.HeartRate}>Heart Rate</option>
+                <option value={GoalType.BloodPressureSystolic}>
                   Blood Pressure (Systolic)
                 </option>
-                <option value="BloodPressureDiastolic">
+                <option value={GoalType.BloodPressureDiastolic}>
                   Blood Pressure (Diastolic)
                 </option>
               </select>
             </div>
 
-            <input
-              placeholder="Enter Current Value of your goal"
-              type="text"
-              value={formData.currentValue}
-              onChange={(e) =>
-                setFormData({ ...formData, currentValue: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Current Value
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                required
+                value={formData.currentValue}
+                onChange={(e) =>
+                  setFormData({ ...formData, currentValue: e.target.value })
+                }
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Enter current value"
+              />
+            </div>
 
-            <input
-              placeholder="Enter Target Value of your goal"
-              type="text"
-              value={formData.currentValue}
-              onChange={(e) =>
-                setFormData({ ...formData, targetValue: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Target Value
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                required
+                value={formData.targetValue}
+                onChange={(e) =>
+                  setFormData({ ...formData, targetValue: e.target.value })
+                }
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Enter target value"
+              />
+            </div>
 
-            <input
-              placeholder="Enter the date when you want to reach your goal  of your goal"
-              type="text"
-              value={formData.currentValue}
-              onChange={(e) =>
-                setFormData({ ...formData, targetDate: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Target Date
+              </label>
+              <input
+                type="date"
+                required
+                value={formData.targetDate}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) =>
+                  setFormData({ ...formData, targetDate: e.target.value })
+                }
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
 
             <div className="mt-4 flex justify-end space-x-2">
               <button

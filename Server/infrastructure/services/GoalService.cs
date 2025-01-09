@@ -58,19 +58,29 @@ namespace Server.infrastructure.services {
             var requestBody = new {
                 model = "gpt-3.5-turbo",
                 messages = new[]
-    {
-                    new { role = "user", content = prompt }
-                },
+                {
+            new { role = "user", content = prompt }
+        },
                 max_tokens = 150
             };
 
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(requestBody),
+                System.Text.Encoding.UTF8,
+                "application/json"
+            );
+
             var response = await _httpClient.PostAsync(
                 "https://api.openai.com/v1/chat/completions",
-                new StringContent(JsonSerializer.Serialize(requestBody))
+                jsonContent
             );
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var responseObject = JsonSerializer.Deserialize<OpenAiResponse>(responseContent);
+
+            if (responseObject?.choices == null || responseObject.choices.Length == 0) {
+                throw new Exception($"OpenAI API error: {responseContent}");
+            }
 
             return responseObject.choices[0].message.content;
         }

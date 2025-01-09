@@ -1,8 +1,9 @@
-export type GoalType =
-  | "Weight"
-  | "HeartRate"
-  | "BloodPressureSystolic"
-  | "BloodPressureDiastolic";
+export enum GoalType {
+  Weight = 0,
+  HeartRate = 1,
+  BloodPressureSystolic = 2,
+  BloodPressureDiastolic = 3,
+}
 
 export interface Goal {
   id: string;

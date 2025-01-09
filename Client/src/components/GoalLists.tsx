@@ -11,6 +11,8 @@ const GoalLists: React.FC = () => {
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   const goals = useSelector(selectGoals);
 
+  console.log(goals);
+
   const getGoalIcon = (type: string) => {
     switch (type) {
       case "Weight":
@@ -26,8 +28,8 @@ const GoalLists: React.FC = () => {
   };
 
   return (
-    <div className="mt-6">
-      <div className="flex justify-between items-center mb-4 p-6">
+    <div className="mt-6 h-full">
+      <div className="flex justify-between items-center mb-2 px-4">
         <h2 className="text-xl font-semibold">Health Goals</h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
@@ -37,12 +39,12 @@ const GoalLists: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid w-[900px] px-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 overflow-y-auto max-h-[calc(100vh-200px)]">
         {goals.map((goal) => (
           <div
             key={goal.id}
             onClick={() => setSelectedGoal(goal)}
-            className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+            className="p-3 bg-white rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
           >
             <div className="flex items-center mb-2">
               <span className="text-2xl mr-2">{getGoalIcon(goal.type)}</span>
@@ -70,7 +72,6 @@ const GoalLists: React.FC = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
       />
-
       <GoalDetailModal
         goal={selectedGoal}
         onClose={() => setSelectedGoal(null)}

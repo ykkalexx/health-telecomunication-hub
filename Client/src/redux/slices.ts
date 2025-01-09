@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { login, register } from "./thunks";
+import { fetchGoals, createGoal } from "./thunks";
 
 export interface HealthInfo {
   Date: string;
@@ -123,7 +124,23 @@ export const goalsSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchGoals.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchGoals.fulfilled, (state, action) => {
+        state.loading = false;
+        state.goals = action.payload;
+      })
+      .addCase(fetchGoals.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
 });
 
 export const { logout } = authSlice.actions;
+export const { setGoals, addGoal, updateGoal } = goalsSlice.actions;
 export default authSlice.reducer;

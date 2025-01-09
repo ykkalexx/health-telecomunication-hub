@@ -1,24 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../redux/root";
 import UploadModal from "../components/UploadModal";
 import Button from "../components/Button";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { selectUserHealthInfo, selectUserId } from "../redux/selectors";
+import {
+  selectGoals,
+  selectUserHealthInfo,
+  selectUserId,
+} from "../redux/selectors";
 import Profile from "../components/Profile";
 import HealthGraphs from "../components/HealthGraphs";
 import GoalLists from "../components/GoalLists";
+import { fetchGoals } from "../redux/thunks";
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 
+  const goals = useSelector(selectGoals);
+
   const userId = useSelector(selectUserId);
   const healthInfo = useSelector(selectUserHealthInfo) || [];
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  useEffect(() => {
+    console.log("Dispatching fetchGoals");
+    //@ts-ignore
+    dispatch(fetchGoals(userId))
+      .unwrap()
+      .then((data) => console.log("Goals fetched successfully:", data))
+      .catch((error) => console.error("Error fetching goals:", error));
+  }, [dispatch]);
 
   const handleFileUpload = async (file: File) => {
     if (!userId) {
