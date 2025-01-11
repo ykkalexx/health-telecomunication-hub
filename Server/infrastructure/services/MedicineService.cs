@@ -32,7 +32,7 @@ namespace Server.infrastructure.services {
 
         public async Task<Medicine> UpdateMedicine(string userId, string medicineId, Medicine medicine) {
             var medicines = await _userRepository.GetMedicines(userId);
-            var med = medicines.FirstOrDefault(m => m.Id == medicineId);
+            var med = medicines.FirstOrDefault(m => m.UserId == medicineId);
 
             if (med == null)
                 throw new KeyNotFoundException("Medicine not found");

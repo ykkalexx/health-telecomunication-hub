@@ -6,6 +6,7 @@ import { CreateGoalRequest } from "../types/goals";
 import { GoalType } from "../types/goals";
 import { selectAuthToken, selectUserId } from "./selectors";
 import { RootState } from "./root";
+import { Medicine } from "./slices";
 
 const API_URL = "https://localhost:7214/api";
 
@@ -24,6 +25,14 @@ axios.interceptors.request.use((config) => {
 interface LoginResponse {
   user: User;
   token: string;
+}
+
+interface CreateMedicineRequest {
+  medicineName: string;
+  quantityPerDay: number;
+  timesPerDay: Date;
+  startDate: Date;
+  endDate: Date;
 }
 
 export const login = createAsyncThunk<
@@ -111,6 +120,7 @@ export const updateGoal = createAsyncThunk(
   async (
     {
       goalId,
+      //@ts-ignore
       UserId,
       currentValue,
       isCompleted,
@@ -148,6 +158,74 @@ export const updateGoal = createAsyncThunk(
       console.error("Error updating goal:", error);
       return rejectWithValue(
         error.response?.data?.message || "Failed to update goal"
+      );
+    }
+  }
+);
+
+export const fetchMedicines = createAsyncThunk(
+  "medicine/fetchMedicines",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_URL}/Medicine/${userId}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Error fetching medicines"
+      );
+    }
+  }
+);
+
+export const createMedicine = createAsyncThunk(
+  "medicine/createMedicine",
+  async (
+    medicineData: CreateMedicineRequest,
+    { getState, rejectWithValue }
+  ) => {
+    try {
+      const state = getState() as RootState;
+      const userId = selectUserId(state);
+
+      if (!userId) {
+        return rejectWithValue("User ID not found");
+      }
+
+      const response = await axios.post(`${API_URL}/Medicine`, {
+        userId,
+        ...medicineData,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to create medicine"
+      );
+    }
+  }
+);
+
+export const updateMedicine = createAsyncThunk(
+  "medicine/updateMedicine",
+  async (
+    { medicineId, ...updateData }: { medicineId: string } & Partial<Medicine>,
+    { getState, rejectWithValue }
+  ) => {
+    try {
+      const state = getState() as RootState;
+      const userId = selectUserId(state);
+
+      if (!userId) {
+        return rejectWithValue("User ID not found");
+      }
+
+      const response = await axios.put(`${API_URL}/Medicine/${medicineId}`, {
+        userId,
+        ...updateData,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update medicine"
       );
     }
   }

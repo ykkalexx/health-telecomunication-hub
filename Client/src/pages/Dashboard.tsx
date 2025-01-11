@@ -13,6 +13,7 @@ import Profile from "../components/Profile";
 import HealthGraphs from "../components/HealthGraphs";
 import GoalLists from "../components/GoalLists";
 import { fetchGoals } from "../redux/thunks";
+import MedicineList from "../components/MedicineList";
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -76,6 +77,7 @@ const Dashboard = () => {
           <Profile />
           <HealthGraphs />
           <GoalLists />
+          <MedicineList />
         </div>
       ) : (
         <div className="px-6 py-2 border-[1px] rounded-xl space-y-4">
