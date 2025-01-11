@@ -22,6 +22,7 @@ namespace Server.core.dtos {
     }
 
     public class UpdateGoalDto {
+        public string UserId { get; set; }
         public double CurrentValue { get; set; }
         public bool IsCompleted { get; set; }
     }

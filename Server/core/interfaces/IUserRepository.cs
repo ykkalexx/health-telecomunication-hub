@@ -1,4 +1,5 @@
-﻿using Server.core.entities;
+﻿using Server.core.dtos;
+using Server.core.entities;
 
 namespace Server.core.interfaces
 {
@@ -12,5 +13,9 @@ namespace Server.core.interfaces
         Task AddGoalAsync(string userId, HealthGoal goal);
         Task<List<HealthGoal>> GetGoalsAsync(string userId);
         Task UpdateGoalAsync(string userId, HealthGoal goal);
+        Task AddMedicineAsync(string userId, Medicine medicine);
+        Task<List<Medicine>> GetMedicines(string userId);
+        Task UpdateMedicine(string userId, Medicine medicine);
+
     }
 }

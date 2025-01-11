@@ -1,6 +1,7 @@
 ﻿using Server.core.interfaces;
 using Server.core.entities;
 using MongoDB.Driver;
+using Server.core.dtos;
 
 namespace Server.infrastructure.data {
     public class UserRepository : IUserRepository {
@@ -56,7 +57,27 @@ namespace Server.infrastructure.data {
                 Builders<User>.Filter.Eq(u => u.Id, userId),
                 Builders<User>.Filter.ElemMatch(u => u.Goals, g => g.Id == goal.Id)
             );
-            var update = Builders<User>.Update.Set(u => u.Goals[-1], goal);
+            var update = Builders<User>.Update.Set(u => u.Goals[0], goal);
+            await _users.UpdateOneAsync(filter, update);
+        }
+
+        public async Task AddMedicineAsync(string userId, Medicine medicine) {
+            var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+            var update = Builders<User>.Update.Push(u => u.Medicine, medicine);
+            await _users.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<List<Medicine>> GetMedicines(string userId) {
+            var user = await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
+            return user?.Medicine ?? new List<Medicine>();
+        }
+
+        public async Task UpdateMedicine(string userId, Medicine medicine) {
+            var filter = Builders<User>.Filter.And(
+                Builders<User>.Filter.Eq(u => u.Id, userId),
+                Builders<User>.Filter.ElemMatch(u => u.Medicine, m => m.MedicineName == medicine.MedicineName)
+            );
+            var update = Builders<User>.Update.Set(u => u.Medicine[0], medicine);
             await _users.UpdateOneAsync(filter, update);
         }
     }

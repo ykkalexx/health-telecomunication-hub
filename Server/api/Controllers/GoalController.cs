@@ -53,15 +53,16 @@ namespace Server.api.Controllers {
         [HttpPut("{goalId}")]
         public async Task<IActionResult> UpdateGoal(string goalId, [FromBody] UpdateGoalDto updateDto) {
             try {
-                var userId = User.FindFirst("sub")?.Value;
-                if (string.IsNullOrEmpty(userId)) {
-                    return Unauthorized();
+                // Get userId from request body like other endpoints
+                if (string.IsNullOrEmpty(updateDto.UserId)) {
+                    return BadRequest("UserId is required");
                 }
 
-                var goal = await _goalService.UpdateGoalAsync(userId, goalId, updateDto);
+                var goal = await _goalService.UpdateGoalAsync(updateDto.UserId, goalId, updateDto);
                 return Ok(goal);
             }
             catch (Exception ex) {
+                _logger.LogError(ex, "Error updating goal");
                 return BadRequest(new { Message = ex.Message });
             }
         }

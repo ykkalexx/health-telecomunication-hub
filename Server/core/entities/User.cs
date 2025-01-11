@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Server.core.dtos;
 
 namespace Server.core.entities
 {
@@ -15,6 +16,7 @@ namespace Server.core.entities
 
         public List<HealthInfo> HealthInfo { get; set; } = new List<HealthInfo>();
         public List<HealthGoal> Goals { get; set; } = new List<HealthGoal>();
+        public List<Medicine> Medicine { get; set; } = new List<Medicine>();
     }
 
     public class HealthGoal {

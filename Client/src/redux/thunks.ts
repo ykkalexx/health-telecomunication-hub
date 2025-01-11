@@ -105,4 +105,50 @@ export const createGoal = createAsyncThunk(
     }
   }
 );
-//export const deleteGoal = createAsyncThunk();
+
+export const updateGoal = createAsyncThunk(
+  "goals/updateGoal",
+  async (
+    {
+      goalId,
+      UserId,
+      currentValue,
+      isCompleted,
+    }: {
+      goalId: string;
+      userId: string;
+      currentValue: number;
+      isCompleted: boolean;
+    },
+    { getState, rejectWithValue }
+  ) => {
+    try {
+      console.log("hit");
+      const state = getState() as RootState;
+      const userId = selectUserId(state); // Use your existing selector
+
+      if (!userId) {
+        return rejectWithValue("User ID not found");
+      }
+
+      console.log("Update request:", {
+        goalId,
+        userId,
+        currentValue,
+        isCompleted,
+      });
+
+      const response = await axios.put(`${API_URL}/Goals/${goalId}`, {
+        UserId: userId,
+        currentValue,
+        isCompleted,
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error("Error updating goal:", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update goal"
+      );
+    }
+  }
+);
