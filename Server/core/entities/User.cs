@@ -17,6 +17,7 @@ namespace Server.core.entities
         public List<HealthInfo> HealthInfo { get; set; } = new List<HealthInfo>();
         public List<HealthGoal> Goals { get; set; } = new List<HealthGoal>();
         public List<Medicine> Medicine { get; set; } = new List<Medicine>();
+        public NotificationSettings NotificationSettings { get; set; } = new();
     }
 
     public class HealthGoal {

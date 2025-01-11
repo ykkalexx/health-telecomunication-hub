@@ -80,5 +80,11 @@ namespace Server.infrastructure.data {
             var update = Builders<User>.Update.Set(u => u.Medicine[0], medicine);
             await _users.UpdateOneAsync(filter, update);
         }
+
+        public async Task UpdateNotificationSettings(string userId, NotificationSettings settings) {
+            var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+            var update = Builders<User>.Update.Set(u => u.NotificationSettings, settings);
+            await _users.UpdateOneAsync(filter, update);
+        }
     }
 }

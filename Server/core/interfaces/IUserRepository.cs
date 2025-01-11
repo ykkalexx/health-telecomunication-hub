@@ -16,6 +16,7 @@ namespace Server.core.interfaces
         Task AddMedicineAsync(string userId, Medicine medicine);
         Task<List<Medicine>> GetMedicines(string userId);
         Task UpdateMedicine(string userId, Medicine medicine);
+        Task UpdateNotificationSettings(string userId, NotificationSettings settings);
 
     }
 }
