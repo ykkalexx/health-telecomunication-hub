@@ -10,6 +10,7 @@ import { RootState } from "./redux/root";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import { NotificationSettings } from "./components/NotificationSettings";
 
 localStorage.removeItem("token");
 
@@ -28,6 +29,7 @@ const App: React.FC = () => {
             path="/dashboard"
             element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
           />
+          <Route path="/settings" element={<NotificationSettings />} />
         </Routes>
       </div>
     </Router>

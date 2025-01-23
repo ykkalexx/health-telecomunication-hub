@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Server.core.interfaces;
+using Server.infrastructure;
 using Server.infrastructure.data;
 using Server.infrastructure.services;
 using System.Text;
@@ -33,6 +34,7 @@ builder.Services.AddScoped<IGoalService, GoalService>();
 builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddHostedService<NotificationBackgroundService>();
+
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -98,5 +100,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<HealthHub>("/healthHub");
 
 app.Run();

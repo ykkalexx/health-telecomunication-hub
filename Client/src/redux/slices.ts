@@ -83,6 +83,47 @@ const medicineInitialState: MedicineState = {
   error: null,
 };
 
+export interface NotificationSettings {
+  emailNotificationsEnabled: boolean;
+  medicineReminderTimes: string[];
+  goalReminderTimes: string[];
+}
+
+interface NotificationState {
+  settings: NotificationSettings;
+  loading: boolean;
+  error: string | null;
+}
+
+const notificationInitialState: NotificationState = {
+  settings: {
+    emailNotificationsEnabled: false,
+    medicineReminderTimes: [],
+    goalReminderTimes: [],
+  },
+  loading: false,
+  error: null,
+};
+
+export const notificationSlice = createSlice({
+  name: "notifications",
+  initialState: notificationInitialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchNotificationSettings.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchNotificationSettings.fulfilled, (state, action) => {
+        state.settings = action.payload;
+        state.loading = false;
+      })
+      .addCase(updateNotificationSettings.fulfilled, (state, action) => {
+        state.settings = action.payload;
+      });
+  },
+});
+
 export const authSlice = createSlice({
   name: "auth",
   initialState: initialAuthState,

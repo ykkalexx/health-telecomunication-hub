@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Login, Register } from "../types/types";
-import { HealthInfo, User } from "./slices";
+import { HealthInfo, NotificationSettings, User } from "./slices";
 import { CreateGoalRequest } from "../types/goals";
 import { GoalType } from "../types/goals";
 import { selectAuthToken, selectUserId } from "./selectors";
@@ -226,6 +226,43 @@ export const updateMedicine = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to update medicine"
+      );
+    }
+  }
+);
+
+export const fetchNotificationSettings = createAsyncThunk(
+  "notifications/fetchSettings",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/Notification/settings/${userId}`
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch settings"
+      );
+    }
+  }
+);
+
+export const updateNotificationSettings = createAsyncThunk(
+  "notifications/updateSettings",
+  async (
+    { userId, settings }: { userId: string; settings: NotificationSettings },
+    { rejectWithValue }
+  ) => {
+    try {
+      console.log("hi");
+      const response = await axios.put(
+        `${API_URL}/Notification/settings/${userId}`,
+        settings
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update settings"
       );
     }
   }

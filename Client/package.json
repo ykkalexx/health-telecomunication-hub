@@ -12,6 +12,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.670.0",
     "@headlessui/react": "^2.1.10",
+    "@microsoft/signalr": "^8.0.7",
     "@reduxjs/toolkit": "^2.2.8",
     "@types/axios": "^0.9.36",
     "@types/react-router-dom": "^5.3.3",
