@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchMedicines, login, register } from "./thunks";
+import {
+  fetchMedicines,
+  fetchNotificationSettings,
+  login,
+  register,
+  updateNotificationSettings,
+} from "./thunks";
 import { fetchGoals, createGoal } from "./thunks";
 
 export interface HealthInfo {
@@ -134,6 +140,11 @@ export const authSlice = createSlice({
       state.user = null;
       localStorage.removeItem("token");
     },
+    updateHealthInfo: (state, action: PayloadAction<HealthInfo[]>) => {
+      if (state.user) {
+        state.user.healthInfo = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -240,6 +251,7 @@ export const medicineSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, updateHealthInfo } = authSlice.actions;
 export const { setGoals, addGoal, updateGoal } = goalsSlice.actions;
+export const { updateMedicine, setMedicines } = medicineSlice.actions;
 export default authSlice.reducer;

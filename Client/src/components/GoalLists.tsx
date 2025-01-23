@@ -1,15 +1,42 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { selectGoals } from "../redux/selectors";
 import { Goal } from "../types/goals";
 import AddGoalModal from "./AddGoalModal";
 import { GoalDetailModal } from "./GoalDetailsModal";
 import { BiPlus } from "react-icons/bi";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { setGoals } from "../redux/slices";
 
 const GoalLists: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   const goals = useSelector(selectGoals);
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+
+  useEffect(() => {
+    const connection = new HubConnectionBuilder()
+      .withUrl("https://localhost:7214/goalHub", {
+        accessTokenFactory: () => token || "",
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("SignalR Connected");
+        connection.on("ReceiveGoalUpdate", (data) => {
+          dispatch(setGoals(data));
+        });
+      })
+      .catch(console.error);
+
+    return () => {
+      connection.stop();
+    };
+  }, []);
 
   console.log(goals);
 

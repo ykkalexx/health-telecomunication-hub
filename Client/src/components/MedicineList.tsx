@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUserId } from "../redux/selectors";
-import { Medicine } from "../redux/slices";
+import { Medicine, setMedicines } from "../redux/slices";
 import { fetchMedicines } from "../redux/thunks";
 import { AppDispatch, RootState } from "../redux/root";
 import AddMedicineModal from "./AddMedicineModal";
 import { BiPlus } from "react-icons/bi";
 import MedicineDetailModal from "./MedicineDetailsModal";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 const MedicineLists: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -16,6 +17,30 @@ const MedicineLists: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const userId = useSelector(selectUserId);
   const medicines = useSelector((state: RootState) => state.medicine.medicines);
+  const token = useSelector((state) => state.auth.token);
+
+  useEffect(() => {
+    const connection = new HubConnectionBuilder()
+      .withUrl("https://localhost:7214/medicineHub", {
+        accessTokenFactory: () => token || "",
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("SignalR Connected");
+        connection.on("ReceiveMedicineUpdate", (data) => {
+          dispatch(setMedicines(data));
+        });
+      })
+      .catch(console.error);
+
+    return () => {
+      connection.stop();
+    };
+  }, []);
 
   useEffect(() => {
     if (userId) {

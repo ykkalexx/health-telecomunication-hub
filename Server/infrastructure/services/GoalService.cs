@@ -1,4 +1,5 @@
-﻿using Server.core.dtos;
+﻿using Microsoft.AspNetCore.SignalR;
+using Server.core.dtos;
 using Server.core.entities;
 using Server.core.interfaces;
 using System.Text.Json;
@@ -8,12 +9,15 @@ namespace Server.infrastructure.services {
         private readonly IUserRepository _userRepository;
         private readonly HttpClient _httpClient;
         private readonly string _openAiApiKey;
+        private readonly IHubContext<GoalHub> _hubContext;
 
-        public GoalService(IUserRepository userRepository, IConfiguration configuration) {
+        public GoalService(IUserRepository userRepository, IConfiguration configuration, IHubContext<GoalHub> hubContext) {
             _userRepository = userRepository;
             _httpClient = new HttpClient();
             _openAiApiKey = configuration["OpenAI:ApiKey"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_openAiApiKey}");
+            _hubContext = hubContext;
+
         }
 
         public async Task<GoalResponseDto> CreateGoalAsync(string userId, CreateGoalDto goalDto) {
@@ -28,6 +32,10 @@ namespace Server.infrastructure.services {
 
             goal.AiGeneratedAdvice = await GenerateAiAdviceAsync(goal);
             await _userRepository.AddGoalAsync(userId, goal);
+            var goals = await _userRepository.GetGoalsAsync(userId);
+
+            // signalR
+            await _hubContext.Clients.User(userId).SendAsync("ReceiveGoalUpdate", goals);
 
             return MapToGoalResponseDto(goal);
         }
@@ -48,6 +56,9 @@ namespace Server.infrastructure.services {
             goal.IsCompleted = updateDto.IsCompleted;
 
             await _userRepository.UpdateGoalAsync(userId, goal);
+
+            // Broadcast update via SignalR
+            await _hubContext.Clients.User(userId).SendAsync("ReceiveGoalUpdate", goals);
 
             return MapToGoalResponseDto(goal);
         }

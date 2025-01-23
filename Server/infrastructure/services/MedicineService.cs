@@ -1,14 +1,17 @@
-﻿using Server.core.dtos;
+﻿using Microsoft.AspNetCore.SignalR;
+using Server.core.dtos;
 using Server.core.interfaces;
 
 namespace Server.infrastructure.services {
     public class MedicineService : IMedicineService {
         private readonly IUserRepository _userRepository;
         private readonly HttpClient _httpClient;
+        private readonly IHubContext<MedicineHub> _hubContext;
 
-        public MedicineService(IUserRepository userRepository) {
+        public MedicineService(IUserRepository userRepository, IHubContext<MedicineHub> hubContext) {
             _userRepository = userRepository;
             _httpClient = new HttpClient();
+            _hubContext = hubContext;
         }
 
         public async Task<Medicine> AddMedicine(string userId, Medicine medicine) {
@@ -22,7 +25,8 @@ namespace Server.infrastructure.services {
             };
 
             await _userRepository.AddMedicineAsync(userId, newmed);
-
+            var medicines = await _userRepository.GetMedicines(userId);
+            await _hubContext.Clients.User(userId).SendAsync("ReceiveMedicineUpdate", medicines);
             return newmed;
         }
 

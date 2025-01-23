@@ -17,7 +17,11 @@ builder.Services.AddSwaggerGen();
 // allow cors
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowAll", builder => {
-        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        builder
+            .WithOrigins("http://localhost:5173") // Your frontend URL
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials(); // Required for SignalR
     });
 });
 
@@ -35,6 +39,9 @@ builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddHostedService<NotificationBackgroundService>();
 
+// Add SignalR
+builder.Services.AddSignalR();
+
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -51,24 +58,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             )
         };
 
-        // Add JWT events for debugging
+        // Configure for SignalR
         options.Events = new JwtBearerEvents
         {
-            OnTokenValidated = context =>
+            OnMessageReceived = context =>
             {
-                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                logger.LogInformation("Token validated successfully");
-                return Task.CompletedTask;
-            },
-            OnAuthenticationFailed = context =>
-            {
-                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                logger.LogError($"Authentication failed: {context.Exception.Message}");
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && 
+                    (path.StartsWithSegments("/healthHub") || 
+                     path.StartsWithSegments("/medicineHub") || 
+                     path.StartsWithSegments("/goalHub")))
+                {
+                    context.Token = accessToken;
+                }
                 return Task.CompletedTask;
             }
         };
     });
-
 // Add logging middleware for debuggin
 
 var app = builder.Build();
@@ -102,5 +109,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<HealthHub>("/healthHub");
+app.MapHub<MedicineHub>("/medicineHub");
+app.MapHub<GoalHub>("/goalHub");
 
 app.Run();

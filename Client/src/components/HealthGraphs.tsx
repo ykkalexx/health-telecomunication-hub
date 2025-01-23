@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,8 +11,10 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { format, parseISO } from "date-fns";
-import { useSelector } from "react-redux";
-import { selectUserHealthInfo } from "../redux/selectors";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserHealthInfo, selectUserId } from "../redux/selectors";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { updateHealthInfo } from "../redux/slices";
 
 ChartJS.register(
   CategoryScale,
@@ -25,7 +27,44 @@ ChartJS.register(
 );
 
 const HealthGraphs = () => {
+  const userId = useSelector(selectUserId);
+  const dispatch = useDispatch();
   const healthInfo = useSelector(selectUserHealthInfo) || [];
+  const [connection, setConnection] = useState<signalR.HubConnection | null>(
+    null
+  );
+  const token = useSelector((state) => state.auth.token);
+
+  useEffect(() => {
+    const newConnection = new HubConnectionBuilder()
+      .withUrl("https://localhost:7214/healthHub", {
+        accessTokenFactory: () => token || "",
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    setConnection(newConnection);
+  }, [token]);
+
+  useEffect(() => {
+    if (connection && userId) {
+      connection
+        .start()
+        .then(() => {
+          console.log("SignalR Connected");
+
+          connection.on("ReceiveHealthUpdate", (data) => {
+            // Update Redux store with new data
+            dispatch(updateHealthInfo(data));
+          });
+        })
+        .catch(console.error);
+
+      return () => {
+        connection.stop();
+      };
+    }
+  }, [connection, userId]);
 
   // Memoize the data processing to optimize for large datasets
   const { dates, weights, heartRates, bloodPressureData } = useMemo(() => {
