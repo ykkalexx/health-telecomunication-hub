@@ -8,7 +8,7 @@ import { selectAuthToken, selectUserId } from "./selectors";
 import { RootState } from "./root";
 import { Medicine } from "./slices";
 
-const API_URL = "https://localhost:7214/api";
+const API_URL = "http://localhost:5128/api";
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");

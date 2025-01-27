@@ -21,7 +21,7 @@ const MedicineLists: React.FC = () => {
 
   useEffect(() => {
     const connection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7214/medicineHub", {
+      .withUrl("http://localhost:5128/medicineHub", {
         accessTokenFactory: () => token || "",
       })
       .withAutomaticReconnect()
@@ -49,26 +49,26 @@ const MedicineLists: React.FC = () => {
   }, [dispatch, userId]);
 
   return (
-    <div className="mt-6 h-full">
-      <div className="flex justify-between items-center mb-2 px-4">
+    <div className="h-full mt-6">
+      <div className="flex items-center justify-between px-4 mb-2">
         <h2 className="text-xl font-semibold">Medications</h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
+          className="p-2 text-white transition-colors bg-blue-500 rounded-full hover:bg-blue-600"
         >
           <BiPlus size={20} />
         </button>
       </div>
 
-      <div className="grid px-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+      <div className="flex flex-row items-center gap-5 overflow-y-scroll">
         {medicines.map((medicine) => (
           <div
             key={medicine.medicineName}
             onClick={() => setSelectedMedicine(medicine)}
-            className="p-3 bg-white rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+            className="p-3 transition-shadow bg-white rounded-lg shadow cursor-pointer hover:shadow-md"
           >
             <div className="flex items-center mb-2">
-              <span className="text-2xl mr-2">💊</span>
+              <span className="mr-2 text-2xl">💊</span>
               <h3 className="font-medium">{medicine.medicineName}</h3>
             </div>
             <div className="text-sm text-gray-600">

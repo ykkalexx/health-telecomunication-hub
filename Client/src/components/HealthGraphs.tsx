@@ -37,7 +37,7 @@ const HealthGraphs = () => {
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7214/healthHub", {
+      .withUrl("http://localhost:5128/healthHub", {
         accessTokenFactory: () => token || "",
       })
       .withAutomaticReconnect()
@@ -182,21 +182,21 @@ const HealthGraphs = () => {
   };
 
   if (!healthInfo.length) {
-    return <div className="text-center p-4">No health data available</div>;
+    return <div className="p-4 text-center">No health data available</div>;
   }
 
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+    <div className="grid w-full grid-cols-1 gap-6 p-4 md:grid-cols-2">
       <div className="h-[300px] p-4 border rounded-lg shadow-sm">
-        <h3 className="text-lg font-semibold mb-2">Weight Over Time</h3>
+        <h3 className="mb-2 text-lg font-semibold">Weight Over Time</h3>
         <Line options={commonOptions} data={weightData} />
       </div>
       <div className="h-[300px] p-4 border rounded-lg shadow-sm">
-        <h3 className="text-lg font-semibold mb-2">Heart Rate Over Time</h3>
+        <h3 className="mb-2 text-lg font-semibold">Heart Rate Over Time</h3>
         <Line options={commonOptions} data={heartRateData} />
       </div>
       <div className="h-[300px] p-4 border rounded-lg shadow-sm md:col-span-2">
-        <h3 className="text-lg font-semibold mb-2">Blood Pressure Over Time</h3>
+        <h3 className="mb-2 text-lg font-semibold">Blood Pressure Over Time</h3>
         <Line options={commonOptions} data={bloodPressureChartData} />
       </div>
     </div>

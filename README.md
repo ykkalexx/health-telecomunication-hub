@@ -83,7 +83,7 @@ dotnet run
 
 ### Backend (appsettings.json)
 
-````json
+```json
 {
   "ConnectionStrings": {
     "MongoDB": "your_connection_string"
@@ -100,9 +100,7 @@ dotnet run
     "Password": "your_password"
   }
 }
-```bash
-
-````
+```
 
 ## Dependencies
 

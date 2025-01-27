@@ -93,6 +93,11 @@ const Dashboard = () => {
               <p>{uploadStatus}</p>
             </div>
           )}
+          <p className="w-[600px] mt-20 text-center">
+            To get Fake Generated Data go to the Github Repo and run the
+            data/generate_data.py script or use generated examples from the
+            results folder{" "}
+          </p>
         </div>
       )}
     </div>

@@ -42,10 +42,10 @@ const Login: React.FC = () => {
       className="flex flex-col items-center justify-center space-y-4 w-[350px]"
       onSubmit={handleSubmit}
     >
-      <h2 className="font-semibold text-2xl">
+      <h2 className="text-2xl font-semibold">
         Login to use HealthTracker Today!
       </h2>
-      <p className="font-light text-sm">
+      <p className="text-sm font-light">
         Don't have an account?{" "}
         <button
           type="button"
@@ -75,7 +75,7 @@ const Login: React.FC = () => {
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+          className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5"
         >
           {showPassword ? <FaEyeSlash /> : <FaEye />}
         </button>
@@ -84,6 +84,11 @@ const Login: React.FC = () => {
       <Button type="submit" disabled={loading} className="w-[200px]">
         {loading ? "Logging in...." : "Login"}
       </Button>
+      <p className="w-[600px] mt-20 text-center">
+        To get Fake Generated Data go to the Github Repo and run the
+        data/generate_data.py script or use generated examples from the results
+        folder{" "}
+      </p>
     </form>
   );
 };
