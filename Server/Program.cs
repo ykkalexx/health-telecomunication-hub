@@ -42,6 +42,8 @@ builder.Services.AddHostedService<NotificationBackgroundService>();
 // Add SignalR
 builder.Services.AddSignalR();
 
+// Add distributed cache (required for RateLimiter)
+builder.Services.AddDistributedMemoryCache(); 
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -79,6 +81,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Add logging middleware for debuggin
 
 var app = builder.Build();
+
+// Add the RateLimiter middleware 
+app.UseMiddleware<RateLimiter>();
 
 app.Use(async (context, next) => {
     var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
