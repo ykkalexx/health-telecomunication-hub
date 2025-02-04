@@ -14,6 +14,7 @@ import HealthGraphs from "../components/HealthGraphs";
 import GoalLists from "../components/GoalLists";
 import { fetchGoals } from "../redux/thunks";
 import MedicineList from "../components/MedicineList";
+import { encryptData } from "../services/EncryptionService";
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,26 +44,35 @@ const Dashboard = () => {
       return;
     }
 
-    const s3Client = new S3Client({
-      region: import.meta.env.VITE_AWS_REGION as string,
-      credentials: {
-        accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY as string,
-        secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY as string,
-      },
-    });
-
-    const params = {
-      Bucket: import.meta.env.VITE_AWS_BUCKET as string,
-      Key: `${userId}_${file.name}`,
-      Body: file,
-      Metadata: {
-        "user-id": userId,
-      },
-    };
-
     try {
+      // Read the file content
+      const fileContent = await file.text();
+
+      // Encrypt the content
+      const encryptedContent = encryptData(fileContent);
+
+      // Create a new file with encrypted content
+      const encryptedFile = new Blob([encryptedContent], { type: "text/csv" });
+
+      const s3Client = new S3Client({
+        region: import.meta.env.VITE_AWS_REGION as string,
+        credentials: {
+          accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY as string,
+          secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY as string,
+        },
+      });
+
+      const params = {
+        Bucket: import.meta.env.VITE_AWS_BUCKET as string,
+        Key: `${userId}_${file.name}`,
+        Body: encryptedFile,
+        Metadata: {
+          "user-id": userId,
+          encrypted: "true",
+        },
+      };
+
       await s3Client.send(new PutObjectCommand(params));
-      console.log("File uploaded successfully");
       setUploadStatus("File uploaded successfully. Processing data...");
     } catch (err: any) {
       console.error("Error", err);
