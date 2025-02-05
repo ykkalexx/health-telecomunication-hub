@@ -4,6 +4,7 @@ import boto3
 from io import StringIO
 from pymongo import MongoClient
 from bson import ObjectId
+import base64
 
 def get_secret(secret_name):
     client = boto3.client('secretsmanager')
@@ -14,6 +15,21 @@ def get_secret(secret_name):
     except Exception as e:
         print(f"Error retrieving secret: {e}")
         raise e
+
+def process_encrypted_value(value):
+    if not value.startswith('#ENC#') or not value.endswith('#ENC#'):
+        return value
+        
+    try:
+        # Remove #ENC# markers
+        encrypted_part = value[5:-5]
+        
+        # Simple base64 decode
+        decoded_data = base64.b64decode(encrypted_part.encode())
+        return decoded_data.decode('utf-8')
+    except Exception as e:
+        print(f"Decoding error: {e}")
+        return "0" 
 
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
@@ -39,6 +55,11 @@ def lambda_handler(event, context):
         df = pd.read_csv(StringIO(file_content))
         df = df.sort_values('Date')
         health_data = df.to_dict('records')
+
+        for record in health_data:
+            for key, value in record.items():
+                if isinstance(value, str):
+                    record[key] = process_encrypted_value(value)
 
         client = MongoClient(MONGO_URI)
         db = client['HealthTracker']
