@@ -1,5 +1,9 @@
 # Health Hub Documentation
 
+## Application Preview
+
+![Health Hub Application Screenshot](https://i.imgur.com/mZCTro3.png)
+
 ## Project Overview
 
 A full-stack health tracking application built with React, TypeScript, .NET Core, and MongoDB, featuring real-time updates using SignalR.

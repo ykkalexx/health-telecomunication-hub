@@ -254,13 +254,15 @@ export const updateNotificationSettings = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      console.log("hi");
+      console.log("Updating notification settings:", { userId, settings });
       const response = await axios.put(
         `${API_URL}/Notification/settings/${userId}`,
         settings
       );
+      console.log("Update response:", response.data);
       return response.data;
     } catch (error: any) {
+      console.error("Update error:", error);
       return rejectWithValue(
         error.response?.data?.message || "Failed to update settings"
       );

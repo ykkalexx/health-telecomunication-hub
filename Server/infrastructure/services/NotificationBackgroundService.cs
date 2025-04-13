@@ -21,16 +21,21 @@ namespace Server.infrastructure.services {
                     var userCollection = mongoDb.GetCollection<User>("Users");
 
                     var currentTime = DateTime.Now.TimeOfDay;
-                    var users = await userCollection.Find(u =>
+                    var twoMinutesAgo = DateTime.Now.AddMinutes(-2).TimeOfDay;
+                    
+                    _logger.LogInformation($"Checking for reminders at {DateTime.Now}");
+                    
+                    var users = await userCollection.Find(u => 
                         u.NotificationSettings.EmailNotificationsEnabled &&
-                        u.NotificationSettings.MedicineReminderTimes.Contains(currentTime))
+                        u.NotificationSettings.MedicineReminderTimes.Any(t => 
+                            t >= twoMinutesAgo && t <= currentTime))
                         .ToListAsync();
 
                     foreach (var user in users) {
                         await SendReminders(user, emailService);
                     }
                 }
-                await Task.Delay(TimeSpan.FromMinutes(30), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(2), stoppingToken);
             }
         }
 

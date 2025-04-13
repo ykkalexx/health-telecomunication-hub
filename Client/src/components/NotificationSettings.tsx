@@ -46,7 +46,7 @@ export const NotificationSettings: React.FC = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
+      <h2 className="mb-4 text-xl font-semibold">Notification Settings</h2>
 
       <div className="space-y-4">
         <div className="flex items-center">
@@ -65,7 +65,7 @@ export const NotificationSettings: React.FC = () => {
         </div>
 
         <div>
-          <h3 className="font-medium mb-2">Medicine Reminder Times</h3>
+          <h3 className="mb-2 font-medium">Medicine Reminder Times</h3>
           <div className="flex flex-wrap gap-2">
             {settings.medicineReminderTimes.map((time, index) => (
               <span key={index} className="px-2 py-1 bg-blue-100 rounded">
@@ -74,7 +74,7 @@ export const NotificationSettings: React.FC = () => {
             ))}
             <button
               onClick={() => handleAddTime("medicine")}
-              className="px-2 py-1 text-blue-600 hover:bg-blue-50 rounded"
+              className="px-2 py-1 text-blue-600 rounded hover:bg-blue-50"
             >
               + Add Time
             </button>
@@ -82,7 +82,7 @@ export const NotificationSettings: React.FC = () => {
         </div>
 
         <div>
-          <h3 className="font-medium mb-2">Goal Reminder Times</h3>
+          <h3 className="mb-2 font-medium">Goal Reminder Times</h3>
           <div className="flex flex-wrap gap-2">
             {settings.goalReminderTimes.map((time, index) => (
               <span key={index} className="px-2 py-1 bg-green-100 rounded">
@@ -91,7 +91,7 @@ export const NotificationSettings: React.FC = () => {
             ))}
             <button
               onClick={() => handleAddTime("goal")}
-              className="px-2 py-1 text-green-600 hover:bg-green-50 rounded"
+              className="px-2 py-1 text-green-600 rounded hover:bg-green-50"
             >
               + Add Time
             </button>
@@ -100,7 +100,7 @@ export const NotificationSettings: React.FC = () => {
 
         <button
           onClick={handleSave}
-          className="w-full mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
         >
           Save Settings
         </button>

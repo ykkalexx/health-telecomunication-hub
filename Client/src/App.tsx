@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import store, { persistor } from "./redux/root";
 import { PersistGate } from "redux-persist/integration/react";
@@ -18,7 +13,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <Router>
-          <div className="flex w-screen h-screen flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center w-screen h-screen">
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />

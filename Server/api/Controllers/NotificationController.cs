@@ -42,17 +42,27 @@ namespace Server.api.Controllers
         {
             try
             {
+                if (settings == null)
+                {
+                    _logger.LogWarning("Null settings received for user {UserId}", userId);
+                    return BadRequest(new { Message = "Settings cannot be null" });
+                }
+
                 var user = await _userRepository.GetByIdAsync(userId);
                 if (user == null)
-                    return NotFound("User not found");
+                    return NotFound(new { Message = "User not found" });
 
+                _logger.LogInformation("Updating settings for user {UserId}: {@Settings}", userId, settings);
                 await _userRepository.UpdateNotificationSettings(userId, settings);
-                return Ok();
+                
+                // Return the updated settings
+                var updatedUser = await _userRepository.GetByIdAsync(userId);
+                return Ok(updatedUser.NotificationSettings);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating notification settings for user {UserId}", userId);
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new { Message = ex.Message, StackTrace = ex.StackTrace });
             }
         }
     }
