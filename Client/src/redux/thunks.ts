@@ -74,12 +74,29 @@ export const fetchGoals = createAsyncThunk(
   "goals/fetchGoals",
   async (userId: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/Goals/${userId}`);
-      console.log("Fetched goals:", response.data);
+      const response = await axios.get(
+        `${API_URL}/Goal/fetch-goals?userId=${userId}`
+      );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Error fetching goals"
+        error.response?.data?.message || "Failed to fetch goals"
+      );
+    }
+  }
+);
+
+export const fetchHealthInfo = createAsyncThunk(
+  "health/fetchHealth",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/Health/fetch-health?userId=${userId}`
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch health info"
       );
     }
   }

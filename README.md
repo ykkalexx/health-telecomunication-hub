@@ -2,7 +2,7 @@
 
 ## Application Preview
 
-![Health Hub Application Screenshot](https://i.imgur.com/mZCTro3.png)
+![Health Hub Application Screenshot](https://imgur.com/WVGOXUf)
 
 ## Project Overview
 
