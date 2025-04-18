@@ -72,7 +72,6 @@ const Dashboard = () => {
         .then((data) => console.log("Goals fetched successfully:", data))
         .catch((error) => console.error("Error fetching goals:", error));
 
-      // Also fetch health info on page load
       dispatch(fetchHealthInfo(userId))
         .unwrap()
         .then((data) => console.log("Health info fetched successfully:", data))
@@ -87,13 +86,10 @@ const Dashboard = () => {
     }
 
     try {
-      // Read the file content
       const fileContent = await file.text();
 
-      // Encrypt the content
       const encryptedContent = encryptData(fileContent);
 
-      // Create a new file with encrypted content
       const encryptedFile = new Blob([encryptedContent], { type: "text/csv" });
 
       const s3Client = new S3Client({
@@ -124,7 +120,6 @@ const Dashboard = () => {
       const checkForData = setInterval(async () => {
         attempts++;
         try {
-          // Fetch latest health info
           await dispatch(fetchHealthInfo(userId)).unwrap();
           clearInterval(checkForData);
           setUploadStatus("Data processed successfully!");

@@ -7,6 +7,8 @@ import {
 import { selectUserId } from "../redux/selectors";
 import { NotificationSettings as Settings } from "../redux/slices";
 import { AppDispatch } from "../redux/root";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 export const NotificationSettings: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,6 +18,8 @@ export const NotificationSettings: React.FC = () => {
     medicineReminderTimes: [],
     goalReminderTimes: [],
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userId) {
@@ -42,6 +46,8 @@ export const NotificationSettings: React.FC = () => {
     if (userId) {
       await dispatch(updateNotificationSettings({ userId, settings }));
     }
+    navigate("/dashboard");
+    toast.success("Notification settings updated successfully");
   };
 
   return (

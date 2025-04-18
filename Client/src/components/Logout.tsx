@@ -11,23 +11,17 @@ const Logout = () => {
 
   const handleLogout = async () => {
     try {
-      // Clear SignalR connections
       await clearSignalRConnections();
 
-      // Remove tokens and sensitive data
       localStorage.removeItem("token");
       sessionStorage.clear();
 
-      // Dispatch logout action
       dispatch(logout());
 
-      // flush the redux store
       dispatch({ type: "RESET_STORE" });
 
-      // Show success message
       toast.success("Logged out successfully");
 
-      // Navigate to login
       navigate("/login", { replace: true });
     } catch (error) {
       toast.error("Error during logout");

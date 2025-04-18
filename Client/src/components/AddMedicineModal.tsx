@@ -34,8 +34,8 @@ export const AddMedicineModal: React.FC<AddMedicineModalProps> = ({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-6">
-          <Dialog.Title className="text-lg font-medium mb-4">
+        <Dialog.Panel className="max-w-sm p-6 mx-auto bg-white rounded">
+          <Dialog.Title className="mb-4 text-lg font-medium">
             Add New Medicine
           </Dialog.Title>
 
@@ -51,7 +51,7 @@ export const AddMedicineModal: React.FC<AddMedicineModalProps> = ({
                 onChange={(e) =>
                   setFormData({ ...formData, medicineName: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                className="block w-full mt-1 border-gray-300 rounded-md shadow-sm"
                 placeholder="Enter medicine name"
               />
             </div>
@@ -70,7 +70,7 @@ export const AddMedicineModal: React.FC<AddMedicineModalProps> = ({
                     quantityPerDay: Number(e.target.value),
                   })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                className="block w-full mt-1 border-gray-300 rounded-md shadow-sm"
               />
             </div>
 
@@ -87,7 +87,7 @@ export const AddMedicineModal: React.FC<AddMedicineModalProps> = ({
                     timesPerDay: new Date(`1970-01-01T${e.target.value}`),
                   })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                className="block w-full mt-1 border-gray-300 rounded-md shadow-sm"
               />
             </div>
 
@@ -104,7 +104,7 @@ export const AddMedicineModal: React.FC<AddMedicineModalProps> = ({
                     startDate: new Date(e.target.value),
                   })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                className="block w-full mt-1 border-gray-300 rounded-md shadow-sm"
               />
             </div>
 
@@ -121,11 +121,11 @@ export const AddMedicineModal: React.FC<AddMedicineModalProps> = ({
                     endDate: new Date(e.target.value),
                   })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                className="block w-full mt-1 border-gray-300 rounded-md shadow-sm"
               />
             </div>
 
-            <div className="mt-4 flex justify-end space-x-2">
+            <div className="flex justify-end mt-4 space-x-2">
               <button
                 type="button"
                 onClick={onClose}

@@ -107,14 +107,14 @@ export const createGoal = createAsyncThunk(
   async (goalData: CreateGoalRequest, { getState, rejectWithValue }) => {
     try {
       const state = getState() as RootState;
-      const userId = selectUserId(state); // Use your existing selector
+      const userId = selectUserId(state);
 
       if (!userId) {
         return rejectWithValue("User ID not found");
       }
 
       const formattedData = {
-        userId: userId, // Add userId to the request
+        userId: userId,
         type: Number(goalData.type),
         currentValue: Number(goalData.currentValue),
         targetValue: Number(goalData.targetValue),
@@ -152,7 +152,7 @@ export const updateGoal = createAsyncThunk(
     try {
       console.log("hit");
       const state = getState() as RootState;
-      const userId = selectUserId(state); // Use your existing selector
+      const userId = selectUserId(state);
 
       if (!userId) {
         return rejectWithValue("User ID not found");
