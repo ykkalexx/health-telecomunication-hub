@@ -7,4 +7,4 @@ namespace Server.infrastructure {
             await Clients.User(userId).SendAsync("ReceiveGoalUpdate", data);
         }
     }
-}
+} 

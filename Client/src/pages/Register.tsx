@@ -93,11 +93,18 @@ const Register: React.FC = () => {
       <Button type="submit" disabled={loading} className="w-[200px]">
         {loading ? "Creating Account...." : "Create Account"}
       </Button>
-      <p className="w-[600px] mt-20 text-center">
-        To get Fake Generated Data go to the Github Repo and run the
-        data/generate_data.py script or use generated examples from the results
-        folder{" "}
-      </p>
+      <div className="p-4 mt-6 border border-blue-200 rounded-lg bg-blue-50">
+        <h3 className="font-medium text-blue-800">Need Test Data?</h3>
+        <p className="mt-1 text-sm text-blue-700">
+          To get sample data, go to the Github Repository and run the
+          data/generate_data.py script or use generated examples from the
+          results folder in the source code files.
+        </p>
+        <p>
+          You can also use this account for testing: test12345678@test.com /
+          password: test123{" "}
+        </p>
+      </div>
     </form>
   );
 };
